@@ -1,0 +1,1 @@
+ALTER TABLE `payments` ADD `pay_voucher` VARCHAR(50) NULL AFTER `pay_client`;

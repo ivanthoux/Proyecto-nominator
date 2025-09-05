@@ -1,0 +1,1 @@
+ALTER TABLE `nominator`.`clients` ADD UNIQUE (`client_doc`);

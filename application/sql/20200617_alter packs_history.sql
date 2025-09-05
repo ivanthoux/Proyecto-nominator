@@ -1,0 +1,1 @@
+ALTER TABLE `packs_history` ADD `packhistory_commision_2` DECIMAL(9,5) NULL AFTER `packhistory_commision`;

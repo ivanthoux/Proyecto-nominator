@@ -1,0 +1,49 @@
+version: "3"
+volumes:
+  phpmyadmin:
+    driver: local
+
+services:
+  mysql:
+    build:
+      context: ./environment/mysql
+      args:
+        mysql_version: ${MYSQL_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./environment/database/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    ports:
+      - "3306:3306"
+    restart: always
+
+  php:
+    build:
+      context: ./environment/php
+      args:
+        php_version: ${PHP_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-php
+    environment:
+      FORCE_ENVIRONMENT: ${ENVIRONMENT}
+    ports:
+      - "${PHP_PORT}:80"
+    volumes:
+      - ./:/var/www/html/nominator
+    links:
+      - mysql
+  phpmyadmin:
+      build: ./environment/phpmyadmin
+      environment:
+        - PMA_ARBITRARY=1
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      ports:
+        - "${PMA_PORT}:80"
+      depends_on:
+        - "${PMA_DB_ENGINE}"
+
